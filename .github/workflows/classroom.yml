@@ -1,0 +1,71 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: E2c
+      id: e2c
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: E2c
+        setup-command: make
+        command: "./run"
+        input: ''
+        expected-output: '1.38424'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1000
+    - name: E1d
+      id: e1d
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: E1d
+        setup-command: make
+        command: "./run"
+        input: ''
+        expected-output: '0.0112'
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: E2b
+      id: e2b
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: E2b
+        setup-command: make
+        command: "./run"
+        input: ''
+        expected-output: '0.794823'
+        comparison-method: contains
+        timeout: 10
+        max-score: 100
+    - name: E2c
+      id: e2c
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: E2c
+        setup-command: make
+        command: "./run"
+        input: ''
+        expected-output: '1.49072'
+        comparison-method: contains
+        timeout: 10
+        max-score: 1000
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        E2C_RESULTS: "${{steps.e2c.outputs.result}}"
+        E1D_RESULTS: "${{steps.e1d.outputs.result}}"
+        E2B_RESULTS: "${{steps.e2b.outputs.result}}"
+      with:
+        runners: e2c,e1d,e2b,e2c
